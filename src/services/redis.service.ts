@@ -6,17 +6,21 @@ class RedisService {
   private ttl: number;
 
   constructor() {
-    // Use environment variables for secure connection
-    const redisConfig = {
-      username: config.redis.username || 'default',
-      password: config.redis.password,
-      host: config.redis.host,
-      port: Number(config.redis.port),
-      ttl: config.redis.ttl,
-      // tls: config.redis.useTLS ? {} : undefined,
-    };
+    // const caPath = path.join(__dirname, "redis_ca.pem"); // Path to CA certificate
+    // const ca = fs.readFileSync(caPath);
+    // const redisConfig = {
+    //   username: config.redis.username || 'default',
+    //   password: config.redis.password,
+    //   host: config.redis.host,
+    //   port: Number(config.redis.port),
+    //   ttl: config.redis.ttl,
+    // };
 
-    this.client = new Redis(redisConfig);
+    const redisUri = `redis://${config.redis.username}:${encodeURIComponent(config.redis.password)}@${config.redis.host}:${config.redis.port}`;
+    this.client = new Redis(redisUri, {
+      commandTimeout: 5000,
+      maxLoadingRetryTime: 3,
+    });
     this.ttl = config.redis.ttl;
 
     this.client.on('error', (error) => {
