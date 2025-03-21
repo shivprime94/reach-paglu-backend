@@ -6,29 +6,30 @@ class RedisService {
   private ttl: number;
 
   constructor() {
-    // const caPath = path.join(__dirname, "redis_ca.pem"); // Path to CA certificate
-    // const ca = fs.readFileSync(caPath);
-    // const redisConfig = {
-    //   username: config.redis.username || 'default',
-    //   password: config.redis.password,
-    //   host: config.redis.host,
-    //   port: Number(config.redis.port),
-    //   ttl: config.redis.ttl,
-    // };
-
-    const redisUri = `redis://${config.redis.username}:${encodeURIComponent(config.redis.password)}@${config.redis.host}:${config.redis.port}`;
-    this.client = new Redis(redisUri, {
+    // Use Upstash Redis connection string (secured with TLS)
+    const upstashConnectionString = config.redis?.url;
+    if (!upstashConnectionString) {
+      throw new Error('Redis connection string is required');
+    }
+    
+    this.client = new Redis(upstashConnectionString, {
       commandTimeout: 5000,
       maxLoadingRetryTime: 3,
+      // Upstash requires TLS
+      tls: {
+        rejectUnauthorized: false // Only set to false if you're having certificate validation issues
+      }
     });
-    this.ttl = config.redis.ttl;
+    
+    // Use TTL from config if available, or default to 3600 seconds (1 hour)
+    this.ttl = config.redis?.ttl || 3600;
 
     this.client.on('error', (error) => {
-      console.error('Redis connection error:', error);
+      console.error('Upstash Redis connection error:', error);
     });
 
     this.client.on('connect', () => {
-      console.log('Connected to Redis Cloud successfully');
+      console.log('Connected to Upstash Redis successfully');
     });
   }
 
