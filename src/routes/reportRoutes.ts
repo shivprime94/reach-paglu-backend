@@ -11,7 +11,7 @@ const router = Router();
 
 // Check account status - caching now handled in controller
 router.get('/check/:platform/:accountId', 
-  rateLimiter(rateLimitConfig.checkAccount),
+  // rateLimiter(rateLimitConfig.checkAccount),
   validate(checkAccountSchema, TValidationAccepted.PARAMS),
   checkAccount
 );
