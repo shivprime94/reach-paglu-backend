@@ -1,4 +1,4 @@
-import { checkAccount, submitReport } from '../controllers/reportController';
+import { checkAccount, submitReport, getAccountReports } from '../controllers/reportController';
 import { checkAccountSchema, submitReportSchema } from '../schemas/report.schema';
 
 import { Router } from 'express';
@@ -23,4 +23,10 @@ router.post('/report',
   submitReport
 );
 
-export default router; 
+// New route to get account reports
+router.get('/reports/:platform/:accountId',
+  rateLimiter(rateLimitConfig.getEvidence),
+  getAccountReports
+);
+
+export default router;
