@@ -6,7 +6,17 @@ class RedisService {
   private ttl: number;
 
   constructor() {
-    this.client = new Redis(config.redis.uri);
+    // Use environment variables for secure connection
+    const redisConfig = {
+      username: config.redis.username || 'default',
+      password: config.redis.password,
+      host: config.redis.host,
+      port: Number(config.redis.port),
+      ttl: config.redis.ttl,
+      // tls: config.redis.useTLS ? {} : undefined,
+    };
+
+    this.client = new Redis(redisConfig);
     this.ttl = config.redis.ttl;
 
     this.client.on('error', (error) => {
@@ -14,7 +24,7 @@ class RedisService {
     });
 
     this.client.on('connect', () => {
-      console.log('Connected to Redis');
+      console.log('Connected to Redis Cloud successfully');
     });
   }
 
@@ -119,4 +129,4 @@ class RedisService {
 }
 
 // Create a singleton instance
-export const redisService = new RedisService(); 
+export const redisService = new RedisService();

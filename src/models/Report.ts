@@ -9,11 +9,35 @@ export interface IReport extends Document {
 }
 
 const reportSchema = new Schema<IReport>({
-  accountKey: { type: String, required: true, unique: true },
-  platform: { type: String, required: true },
-  accountId: { type: String, required: true },
-  votes: { type: Number, default: 0 },
-  lastReported: { type: Date, default: Date.now }
+  accountKey: { 
+    type: String, 
+    required: true, 
+    unique: true,
+    index: true // Index on accountKey for faster lookups
+  },
+  platform: { 
+    type: String, 
+    required: true,
+    index: true // Index on platform for platform-specific queries
+  },
+  accountId: { 
+    type: String, 
+    required: true,
+    index: true // Index on accountId for user-specific queries
+  },
+  votes: { 
+    type: Number, 
+    default: 0,
+    index: true // Index on votes for threshold queries
+  },
+  lastReported: { 
+    type: Date, 
+    default: Date.now,
+    index: true // Index on timestamp for time-based queries
+  }
 });
 
-export const Report = mongoose.model<IReport>('Report', reportSchema); 
+// Compound index for platform + accountId queries
+reportSchema.index({ platform: 1, accountId: 1 });
+
+export const Report = mongoose.model<IReport>('Report', reportSchema);
