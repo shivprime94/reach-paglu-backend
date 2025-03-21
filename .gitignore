@@ -16,3 +16,13 @@ yarn-error.log
 # OS specific
 .DS_Store
 Thumbs.db
+
+# TypeScript related
+dist/
+*.tsbuildinfo
+
+# Environment files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
