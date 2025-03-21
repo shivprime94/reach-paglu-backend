@@ -17,7 +17,7 @@ export const config = {
     host: process.env.REDIS_HOST || 'localhost',
     port: process.env.REDIS_PORT || 6379,
     ttl: process.env.CACHE_TTL ? parseInt(process.env.CACHE_TTL, 10) : 3600,
-    useTLS: process.env.REDIS_USE_TLS,
+    // useTLS: process.env.REDIS_USE_TLS,
   },
   
   // Add any other configuration values here
